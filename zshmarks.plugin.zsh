@@ -94,20 +94,22 @@ function showmarks() {
   local bookmark_file="$(<"$BOOKMARKS_FILE")"
   local bookmark_array; bookmark_array=(${(f)bookmark_file});
   local bookmark_name bookmark_path bookmark_line
+  local output
   if [[ $# -eq 1 ]]; then
     bookmark_name="*\|${1}"
     bookmark_line=${bookmark_array[(r)$bookmark_name]}
     bookmark_path="${bookmark_line%%|*}"
     bookmark_path="${bookmark_path/\$HOME/~}"
-    printf "%s \n" $bookmark_path
+    output=$(printf "$output\n%s" $bookmark_path)
   else
     for bookmark_line in $bookmark_array; do
       bookmark_path="${bookmark_line%%|*}"
       bookmark_path="${bookmark_path/\$HOME/~}"
       bookmark_name="${bookmark_line#*|}"
-      printf "%s\t\t%s\n" "$bookmark_name" "$bookmark_path"
+      output=$(printf "$output\n%s\t%s" "$bookmark_name" "$bookmark_path")
     done
   fi
+  echo "$output" | column -t -s $'\t'
 }
 
 # Delete a bookmark
